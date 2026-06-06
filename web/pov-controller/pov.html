@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>POV Lightstick Tuner</title>
+    <link rel="stylesheet" href="pov.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">ESP32-C3 / MPU6500 / POV</p>
+          <h1>POV Lightstick Tuner</h1>
+        </div>
+        <div class="actions">
+          <span id="statusDot" class="dot"></span>
+          <span id="statusText">未连接</span>
+          <button id="connectBtn" class="primary">连接 C3</button>
+          <button id="disconnectBtn">断开</button>
+        </div>
+      </header>
+
+      <section class="layout">
+        <section class="panel previewPanel">
+          <div class="panelHead">
+            <h2>字形预览</h2>
+            <div class="miniActions">
+              <button id="previewBtn">板上预览</button>
+              <button id="clearBtn">清灯</button>
+              <button id="getBtn">读取参数</button>
+            </div>
+          </div>
+          <div class="textTools">
+            <input id="textInput" type="text" value="HELLO" maxlength="16" />
+            <button id="sendTextBtn">发送文字</button>
+          </div>
+          <canvas id="fontCanvas" width="640" height="260"></canvas>
+          <canvas id="stripCanvas" width="640" height="120"></canvas>
+          <div class="metrics">
+            <span>速度 <b id="speedNow">0</b></span>
+            <span>画幅 <b id="rangeNow">0</b></span>
+            <span>轴向 <b id="axisNow">-</b></span>
+            <span>列 <b id="columnNow">0</b></span>
+            <span>状态 <b id="activeNow">idle</b></span>
+          </div>
+        </section>
+
+        <section class="panel controlsPanel">
+          <h2>实时参数</h2>
+          <div id="controls" class="controls"></div>
+          <div class="toggles">
+            <label><input id="oneShotInput" type="checkbox" checked /> 单次播放</label>
+            <label><input id="autoRangeInput" type="checkbox" checked /> 自动画幅</label>
+            <label><input id="xyOnlyInput" type="checkbox" checked /> 只用 X/Y</label>
+            <label><input id="reverseInput" type="checkbox" /> 反向显示</label>
+            <label><input id="invertRowsInput" type="checkbox" /> 上下翻转</label>
+          </div>
+        </section>
+      </section>
+
+      <section class="panel logPanel">
+        <div class="panelHead">
+          <h2>硬件日志</h2>
+          <span id="lastCommand">等待发送</span>
+        </div>
+        <pre id="logBox"></pre>
+      </section>
+    </main>
+
+    <script src="pov.js"></script>
+  </body>
+</html>
