@@ -4,6 +4,19 @@ ESP32-C3 based persistence-of-vision lightstick experiment. The lightstick uses 
 
 This repository is a public, cleaned-up snapshot of the prototype research. It focuses on reproducible firmware, hardware notes, and a small browser-based tuning console.
 
+## Why this matters
+
+POV lightsticks are a useful bridge between maker hardware, live performance tools, and accessible embedded systems education. Most examples stop at a fixed demo pattern, while real hand-waved text needs motion sensing, timing calibration, bitmap conversion, LED power constraints, and a workflow for tuning the result on actual hardware.
+
+This project keeps those pieces in one inspectable repository:
+
+- firmware that shows how motion data drives the POV scan
+- a browser-based tuning console that reduces the need to reflash for every timing change
+- hardware notes for reproducing the ESP32-C3, MPU6500, and LED strip setup
+- a narrow publication boundary so the project stays focused on open prototype work
+
+The goal is not to clone any commercial lightstick. The goal is to make a small open reference implementation for people building their own hand-waved text, concert props, classroom demos, and light-art prototypes.
+
 ## What it does
 
 - Renders short text as POV columns on a single 50 pixel NeoPixel strip.
@@ -73,6 +86,16 @@ Still experimental:
 - Mechanical mounting and optical spacing need per-build calibration.
 - Chinese character support currently uses fixed bitmap columns in firmware; the browser console ships with a compact ASCII 5x7 font path.
 - Motion thresholds depend on battery weight, grip, and LED strip placement.
+
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for the current maintenance plan. The next priorities are:
+
+- better text and bitmap generation
+- repeatable motion calibration
+- persistent Web Serial settings
+- clearer wiring diagrams and build photos
+- lightweight firmware checks for future pull requests
 
 ## Scope
 
