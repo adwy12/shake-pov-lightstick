@@ -13,6 +13,7 @@ This project keeps those pieces in one inspectable repository:
 - firmware that shows how motion data drives the POV scan
 - a browser-based tuning console that reduces the need to reflash for every timing change
 - hardware notes for reproducing the ESP32-C3, MPU6500, and LED strip setup
+- innovation notes for motion-aware scan timing and repeatable bitmap generation
 - a narrow publication boundary so the project stays focused on open prototype work
 
 The goal is not to clone any commercial lightstick. The goal is to make a small open reference implementation for people building their own hand-waved text, concert props, classroom demos, and light-art prototypes.
@@ -23,6 +24,8 @@ The goal is not to clone any commercial lightstick. The goal is to make a small 
 - Uses MPU6500 gyro data to detect swing direction and motion range.
 - Drives the display from an ESP32-C3 on GPIO 4.
 - Supports a Web Serial tuning page for text, speed, brightness, swing thresholds, direction, and preview commands.
+- Persists browser-side tuning profiles so calibration work is not lost on refresh.
+- Includes a command-line text-to-column generator for reproducible bitmap data.
 - Keeps the implementation small enough to inspect and modify directly in Arduino IDE or PlatformIO-style workflows.
 
 ## Repository layout
@@ -36,6 +39,9 @@ web/pov-controller/
 
 docs/
   Hardware notes and BLE/control protocol notes from the broader lightstick work.
+
+tools/
+  Small local utilities for generated POV column data.
 ```
 
 ## Hardware target
@@ -49,6 +55,8 @@ docs/
 - Default LED brightness: 135
 
 See [docs/hardware-notes.md](docs/hardware-notes.md) for wiring and bring-up notes.
+
+See [docs/innovation-optimizations.md](docs/innovation-optimizations.md) for the motion and tuning ideas behind the project.
 
 ## Firmware dependencies
 
@@ -71,6 +79,15 @@ The page can:
 - tune thresholds and timing
 - preview or clear the LED strip
 - display serial telemetry from the firmware
+- remember tuning values in browser local storage
+
+## Text column generation
+
+Generate firmware-ready 5x7 ASCII columns:
+
+```bash
+node tools/text_to_columns.js "HELLO"
+```
 
 ## Status
 

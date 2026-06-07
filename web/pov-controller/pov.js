@@ -4,6 +4,8 @@ let messageCols = [
   0x7f, 0x20, 0x18, 0x20, 0x7f, 0x00, 0x00,
 ];
 
+const STORAGE_KEY = "shake-pov-lightstick.profile.v1";
+
 const FONT_5X7 = {
   " ": [0x00, 0x00, 0x00],
   "0": [0x3e, 0x45, 0x49, 0x51, 0x3e],
@@ -108,6 +110,38 @@ const state = {
   lastColumn: 0,
 };
 
+function loadProfile() {
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || "{}");
+    if (saved && typeof saved === "object") {
+      for (const key of Object.keys(config)) {
+        if (Number.isFinite(saved.config?.[key])) {
+          config[key] = Number(saved.config[key]);
+        }
+      }
+      if (typeof saved.text === "string") {
+        textInput.value = saved.text.toUpperCase().replace(/[^A-Z0-9 ]/g, "").slice(0, 16) || "HELLO";
+      }
+    }
+  } catch (error) {
+    appendLog(`配置读取失败：${error.message}`);
+  }
+}
+
+function saveProfile() {
+  try {
+    const profile = {
+      text: textInput.value,
+      config: { ...config },
+      columns: messageCols,
+      savedAt: new Date().toISOString(),
+    };
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+  } catch (error) {
+    appendLog(`配置保存失败：${error.message}`);
+  }
+}
+
 function textToColumns(text) {
   const clean = text.toUpperCase().replace(/[^A-Z0-9 ]/g, "").slice(0, 16) || "HELLO";
   const cols = [];
@@ -124,6 +158,7 @@ function sendTextToBoard() {
   textInput.value = textInput.value.toUpperCase().replace(/[^A-Z0-9 ]/g, "").slice(0, 16) || "HELLO";
   state.lastColumn = 0;
   drawPreview();
+  saveProfile();
   const hex = messageCols.map((value) => value.toString(16).padStart(2, "0").toUpperCase()).join("");
   return sendLine(`COLS,${hex}`);
 }
@@ -157,30 +192,36 @@ function buildControls() {
       normalizeDelayPair(key);
       syncControls();
       drawPreview();
+      saveProfile();
       queueConfigSend();
     });
   }
 
   oneShotInput.addEventListener("change", () => {
     config.oneShot = oneShotInput.checked ? 1 : 0;
+    saveProfile();
     queueConfigSend();
   });
   autoRangeInput.addEventListener("change", () => {
     config.autoRange = autoRangeInput.checked ? 1 : 0;
+    saveProfile();
     queueConfigSend();
   });
   xyOnlyInput.addEventListener("change", () => {
     config.xyOnly = xyOnlyInput.checked ? 1 : 0;
+    saveProfile();
     queueConfigSend();
   });
   reverseInput.addEventListener("change", () => {
     config.reverse = reverseInput.checked ? 1 : 0;
     drawPreview();
+    saveProfile();
     queueConfigSend();
   });
   invertRowsInput.addEventListener("change", () => {
     config.invertRows = invertRowsInput.checked ? 1 : 0;
     drawPreview();
+    saveProfile();
     queueConfigSend();
   });
 }
@@ -341,6 +382,7 @@ function handleSerialLine(line) {
     if (!Number.isFinite(config.rangeLearning)) config.rangeLearning = 28;
     if (!Number.isFinite(config.xyOnly)) config.xyOnly = 1;
     syncControls();
+    saveProfile();
     return;
   }
 
@@ -435,7 +477,9 @@ getBtn.addEventListener("click", () => sendLine("GET"));
 sendTextBtn.addEventListener("click", () => sendTextToBoard());
 textInput.addEventListener("change", () => sendTextToBoard());
 
+loadProfile();
 buildControls();
 messageCols = textToColumns(textInput.value);
 syncControls();
+saveProfile();
 setConnected(false, "未连接");

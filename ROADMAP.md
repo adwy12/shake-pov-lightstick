@@ -6,7 +6,7 @@ This roadmap tracks the next practical improvements for the hand-waved POV light
 
 ### Text and bitmap generation
 
-- Add a repeatable bitmap generation pipeline for short words and names.
+- Extend the current `tools/text_to_columns.js` generator beyond compact ASCII.
 - Document the column format used by the firmware.
 - Support more non-ASCII glyphs through generated column arrays instead of hand-edited constants.
 - Add examples for 5x7 ASCII text and taller 50-pixel custom text.
@@ -19,7 +19,7 @@ This roadmap tracks the next practical improvements for the hand-waved POV light
 
 ### Web Serial tuning
 
-- Save tuning values in browser local storage.
+- Add visible import/export controls for the browser-local tuning profile.
 - Add import/export for a tuning profile.
 - Add a copyable firmware constant block for values found during tuning.
 - Improve mobile-size layout for tablets used at a workbench.
