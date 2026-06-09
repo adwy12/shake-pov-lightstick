@@ -89,6 +89,19 @@ Generate firmware-ready 5x7 ASCII columns:
 node tools/text_to_columns.js "HELLO"
 ```
 
+Generate machine-readable output for tests or build scripts:
+
+```bash
+node tools/text_to_columns.js --json "HELLO"
+```
+
+## Local checks
+
+```bash
+node tests/test_text_to_columns.js
+arduino-cli compile --fqbn esp32:esp32:esp32c3 firmware/esp32c3_50_pov
+```
+
 ## Status
 
 Confirmed in the prototype:

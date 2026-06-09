@@ -40,7 +40,9 @@ const FONT_5X7 = {
   "Z": [0x43, 0x45, 0x49, 0x51, 0x61],
 };
 
-const input = process.argv.slice(2).join(" ") || "HELLO";
+const args = process.argv.slice(2);
+const jsonOutput = args.includes("--json");
+const input = args.filter((arg) => arg !== "--json").join(" ") || "HELLO";
 const clean = input.toUpperCase().replace(/[^A-Z0-9 ]/g, "").slice(0, 16) || "HELLO";
 const columns = [];
 for (const char of clean) {
@@ -48,6 +50,12 @@ for (const char of clean) {
 }
 columns.push(0x00);
 const limited = columns.slice(0, 96);
+const hex = limited.map((value) => value.toString(16).padStart(2, "0").toUpperCase()).join("");
+
+if (jsonOutput) {
+  console.log(JSON.stringify({ text: clean, columns: limited, hex }, null, 2));
+  process.exit(0);
+}
 
 console.log(`// Text: ${clean}`);
 console.log(`// Columns: ${limited.length}`);
