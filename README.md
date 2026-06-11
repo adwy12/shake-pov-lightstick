@@ -95,6 +95,12 @@ Generate machine-readable output for tests or build scripts:
 node tools/text_to_columns.js --json "HELLO"
 ```
 
+Limit output width or choose the generated C++ array name:
+
+```bash
+node tools/text_to_columns.js --max-columns 48 --name DEMO_TEXT "HELLO"
+```
+
 ## Local checks
 
 ```bash

@@ -42,24 +42,50 @@ const FONT_5X7 = {
 
 const args = process.argv.slice(2);
 const jsonOutput = args.includes("--json");
-const input = args.filter((arg) => arg !== "--json").join(" ") || "HELLO";
+let maxColumns = 96;
+let arrayName = "MESSAGE_COLUMNS";
+const textArgs = [];
+for (let i = 0; i < args.length; i++) {
+  const arg = args[i];
+  if (arg === "--json") {
+    continue;
+  }
+  if (arg === "--max-columns") {
+    const parsed = Number(args[++i]);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      maxColumns = Math.min(512, Math.floor(parsed));
+    }
+    continue;
+  }
+  if (arg === "--name") {
+    const rawName = args[++i] || "";
+    const cleanName = rawName.replace(/[^A-Za-z0-9_]/g, "_");
+    if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(cleanName)) {
+      arrayName = cleanName;
+    }
+    continue;
+  }
+  textArgs.push(arg);
+}
+const input = textArgs.join(" ") || "HELLO";
 const clean = input.toUpperCase().replace(/[^A-Z0-9 ]/g, "").slice(0, 16) || "HELLO";
 const columns = [];
 for (const char of clean) {
   columns.push(...(FONT_5X7[char] || FONT_5X7[" "]), 0x00);
 }
 columns.push(0x00);
-const limited = columns.slice(0, 96);
+const limited = columns.slice(0, maxColumns);
+const truncated = columns.length > limited.length;
 const hex = limited.map((value) => value.toString(16).padStart(2, "0").toUpperCase()).join("");
 
 if (jsonOutput) {
-  console.log(JSON.stringify({ text: clean, columns: limited, hex }, null, 2));
+  console.log(JSON.stringify({ text: clean, columns: limited, hex, maxColumns, truncated }, null, 2));
   process.exit(0);
 }
 
 console.log(`// Text: ${clean}`);
 console.log(`// Columns: ${limited.length}`);
-console.log("static const uint8_t MESSAGE_COLUMNS[] = {");
+console.log(`static const uint8_t ${arrayName}[] = {`);
 for (let i = 0; i < limited.length; i += 12) {
   console.log(`  ${limited.slice(i, i + 12).map((value) => `0x${value.toString(16).padStart(2, "0")}`).join(", ")},`);
 }
